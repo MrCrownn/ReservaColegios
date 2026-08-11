@@ -33,7 +33,7 @@ Antes de desplegar, reemplaza los valores sensibles (marcados con `TU_...`):
 ## Estructura de hojas (Google Sheets)
 
 ### Tablets
-- **Solicitudes** — pedidos registrados: `Profesor`, `Cantidad`, `Fecha`, `Curso`, `HoraInicio`, `HoraFin`, `Estado`, `Comentarios`, `Checkbox (Columna J)`, `Errores (Columna K)`.
+- **Solicitudes** — pedidos registrados: `Profesor  (Columna A)`, `Cantidad  (Columna B) `, `Fecha  (Columna C)`, `Curso  (Columna D)`, `HoraInicio  (Columna E)`, `HoraFin  (Columna F)`, `Estado  (Columna G)`, `Comentarios (Columna I)`, `Checkbox (Columna J)`, `Errores (Columna K)`.
 - **Profes** — diccionario de profesores: `Nombre`, `Apellido`, `Correo`.
 - **Horario semanal** — columna `Hora` + columnas por día. Celdas coloreadas = reserva.
 
