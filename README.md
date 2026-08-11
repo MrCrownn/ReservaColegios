@@ -69,5 +69,3 @@ Para ver el funcionamiento de este proyecto se puede visitar la url.
    
    
 
-## Nota de seguridad
-Los archivos `.xlsx` con datos reales están excluidos del repositorio (`.gitignore`); solo se suben las plantillas (`Plantilla*.xlsx`). No subas datos personales de profesores ni claves a GitHub.
