@@ -1,4 +1,4 @@
-# Sistema de Reservas — Colegio El Alba de Macul
+# Sistema de Reservas 
 
 Sistema de reservas de **Tablets** y **Sala** sobre Google Sheets + Apps Script, con frontend embebido en Google Sites.
 
