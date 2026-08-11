@@ -1,0 +1,12 @@
+# Datos reales de la hoja de cálculo (las plantillas Plantilla*.xlsx sí se suben)
+*.xlsx
+*.xls
+!Plantilla*.xlsx
+
+# Archivos de trabajo con configuraciones locales
+*.local.*
+
+# Notas y temporales
+*.log
+.DS_Store
+Thumbs.db

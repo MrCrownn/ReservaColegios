@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body { font-family: sans-serif; margin: 15px; background-color: #f4f4f4; }
+      select { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
+      button { padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+      button:hover { background-color: #45a049; }
+      button:disabled { background-color: #94a3b8; cursor: not-allowed; }
+      h4 { margin-bottom: 5px; color: #333; }
+      #msg { margin-top: 10px; font-size: 13px; display: none; }
+    </style>
+  </head>
+  <body>
+    <h4>Se encontraron múltiples coincidencias.</h4>
+    <p>Por favor, selecciona al profesor correcto:</p>
+    
+    <select id="opcionesSelect">
+      <? for (let i = 0; i < opciones.length; i++) { ?>
+        <option value="<?= opciones[i].correo ?>"><?= opciones[i].nombre ?> (<?= opciones[i].correo ?>)</option>
+      <? } ?>
+    </select>
+    
+    <button id="btnEnviar" onclick="enviarSeleccion()">Seleccionar</button>
+    <div id="msg"></div>
+    
+    <script>
+      var enviado = false;
+
+      function enviarSeleccion() {
+        if (enviado) return;
+        enviado = true;
+
+        var btn = document.getElementById('btnEnviar');
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+
+        var msg = document.getElementById('msg');
+        msg.style.display = 'block';
+        msg.style.color = '#666';
+        msg.textContent = 'Procesando...';
+
+        var select = document.getElementById('opcionesSelect');
+        var correoSeleccionado = select.value;
+        var rowNum = <?= rowNum ?>;
+        
+        google.script.run
+          .withSuccessHandler(function(resp) {
+            msg.style.color = '#16a34a';
+            msg.textContent = resp;
+            setTimeout(function() { google.script.host.close(); }, 1500);
+          })
+          .withFailureHandler(function(error) {
+            msg.style.color = '#dc2626';
+            msg.textContent = 'Error: ' + error.message;
+            btn.disabled = false;
+            btn.textContent = 'Reintentar';
+            enviado = false;
+          })
+          .procesarSeleccion(correoSeleccionado, rowNum);
+      }
+    </script>
+  </body>
+</html>

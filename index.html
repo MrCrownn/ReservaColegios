@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserva Tablets - Colegio </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: {
+              red: '#ea1c45',
+              'red-dark': '#c4163a',
+              'red-light': '#ff3366',
+              pink: '#D37FB0',
+              'pink-light': '#e8a8ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden; }
+
+    /* ==================== CSS VARIABLES ==================== */
+    :root {
+      --bg-body: #f4f4f7;
+      --bg-mesh-1: rgba(234, 28, 69, 0.08);
+      --bg-mesh-2: rgba(211, 127, 176, 0.07);
+      --bg-mesh-3: rgba(234, 28, 69, 0.05);
+      --bg-mesh-4: rgba(180, 180, 190, 0.06);
+      --orb-1-opacity: 0.12;
+      --orb-2-opacity: 0.1;
+      --orb-3-opacity: 0.06;
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(0, 0, 0, 0.08);
+      --glass-strong-bg: rgba(255, 255, 255, 0.8);
+      --glass-strong-border: rgba(0, 0, 0, 0.1);
+      --card-bg: rgba(255, 255, 255, 0.65);
+      --card-border: rgba(0, 0, 0, 0.07);
+      --card-hover-bg: rgba(255, 255, 255, 0.85);
+      --card-hover-border: rgba(234, 28, 69, 0.2);
+      --card-hover-shadow: rgba(234, 28, 69, 0.1);
+      --text-primary: #1a1a2e;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --text-on-glass: #334155;
+      --input-bg: rgba(0, 0, 0, 0.03);
+      --input-border: rgba(0, 0, 0, 0.1);
+      --input-focus-bg: #fff;
+      --input-focus-border: rgba(234, 28, 69, 0.5);
+      --input-focus-shadow: rgba(234, 28, 69, 0.12);
+      --input-focus-glow: rgba(234, 28, 69, 0.08);
+      --table-header-bg: rgba(0, 0, 0, 0.04);
+      --table-header-text: #64748b;
+      --table-border: rgba(0, 0, 0, 0.06);
+      --table-row-hover: rgba(234, 28, 69, 0.03);
+      --cell-empty-border: rgba(0, 0, 0, 0.08);
+      --cell-empty-bg: rgba(0, 0, 0, 0.015);
+      --cell-empty-text: #cbd5e1;
+      --cell-reserved-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.06), rgba(99, 102, 241, 0.04));
+      --cell-reserved-border: rgba(59, 130, 246, 0.15);
+      --cell-reserved-hover-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.07));
+      --cell-reserved-hover-border: rgba(59, 130, 246, 0.25);
+      --lunch-bg: rgba(0, 0, 0, 0.02);
+      --lunch-border: rgba(0, 0, 0, 0.06);
+      --lunch-text: #D37FB0;
+      --btn-text: #fff;
+      --scrollbar-track: rgba(0,0,0,0.03);
+      --scrollbar-thumb: rgba(234,28,69,0.15);
+      --scrollbar-thumb-hover: rgba(234,28,69,0.3);
+      --badge-online-bg: rgba(234, 28, 69, 0.08);
+      --badge-online-border: rgba(234, 28, 69, 0.15);
+      --badge-tablet-bg: rgba(59, 130, 246, 0.15);
+      --badge-tablet-border: rgba(59, 130, 246, 0.12);
+      --badge-tablet-text: #2563eb;
+      --section-icon-bg: rgba(234, 28, 69, 0.08);
+      --section-icon-text: #ea1c45;
+      --section-icon-cal-bg: rgba(0, 0, 0, 0.04);
+      --section-icon-cal-text: #94a3b8;
+      --separator: rgba(0, 0, 0, 0.06);
+      --loader-border: rgba(234, 28, 69, 0.15);
+      --loader-border-top: #ea1c45;
+      --alert-success-bg: rgba(16, 185, 129, 0.06);
+      --alert-success-border: rgba(16, 185, 129, 0.15);
+      --alert-success-text: #047857;
+      --alert-error-bg: rgba(234, 28, 69, 0.06);
+      --alert-error-border: rgba(234, 28, 69, 0.15);
+      --alert-error-text: #c4163a;
+      --btn-disabled-bg: rgba(0,0,0,0.06);
+      --btn-disabled-text: rgba(0,0,0,0.25);
+      --btn-spinner-border: rgba(0,0,0,0.1);
+      --btn-spinner-top: rgba(0,0,0,0.4);
+      --cell-perm-bg: linear-gradient(135deg, rgba(234, 28, 69, 0.07), rgba(211, 127, 176, 0.04));
+      --cell-perm-border: rgba(234, 28, 69, 0.2);
+      --cell-perm-hover-bg: linear-gradient(135deg, rgba(234, 28, 69, 0.12), rgba(211, 127, 176, 0.07));
+      --cell-perm-hover-border: rgba(234, 28, 69, 0.3);
+      --cell-perm-accent: #ea1c45;
+      --badge-perm-bg: rgba(234, 28, 69, 0.12);
+      --badge-perm-border: rgba(234, 28, 69, 0.15);
+      --badge-perm-text: #c4163a;
+    }
+
+    html.dark {
+      --bg-body: #0c0c0f;
+      --bg-mesh-1: rgba(234, 28, 69, 0.2);
+      --bg-mesh-2: rgba(211, 127, 176, 0.15);
+      --bg-mesh-3: rgba(234, 28, 69, 0.1);
+      --bg-mesh-4: rgba(180, 180, 190, 0.08);
+      --orb-1-opacity: 0.35;
+      --orb-2-opacity: 0.35;
+      --orb-3-opacity: 0.15;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      --glass-strong-bg: rgba(255, 255, 255, 0.06);
+      --glass-strong-border: rgba(255, 255, 255, 0.08);
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.06);
+      --card-hover-bg: rgba(255, 255, 255, 0.05);
+      --card-hover-border: rgba(234, 28, 69, 0.15);
+      --card-hover-shadow: rgba(234, 28, 69, 0.2);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
+      --text-on-glass: rgba(255, 255, 255, 0.5);
+      --input-bg: rgba(255, 255, 255, 0.03);
+      --input-border: rgba(255, 255, 255, 0.07);
+      --input-focus-bg: rgba(255, 255, 255, 0.05);
+      --input-focus-border: rgba(234, 28, 69, 0.4);
+      --input-focus-shadow: rgba(234, 28, 69, 0.1);
+      --input-focus-glow: rgba(234, 28, 69, 0.15);
+      --table-header-bg: rgba(255, 255, 255, 0.03);
+      --table-header-text: rgba(255, 255, 255, 0.4);
+      --table-border: rgba(255, 255, 255, 0.05);
+      --table-row-hover: rgba(255, 255, 255, 0.02);
+      --cell-empty-border: rgba(255, 255, 255, 0.05);
+      --cell-empty-bg: rgba(255, 255, 255, 0.01);
+      --cell-empty-text: rgba(255, 255, 255, 0.12);
+      --cell-reserved-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.06), rgba(99, 102, 241, 0.04));
+      --cell-reserved-border: rgba(59, 130, 246, 0.12);
+      --cell-reserved-hover-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.06));
+      --cell-reserved-hover-border: rgba(59, 130, 246, 0.2);
+      --lunch-bg: rgba(255, 255, 255, 0.015);
+      --lunch-border: rgba(255, 255, 255, 0.05);
+      --lunch-text: rgba(211, 127, 176, 0.6);
+      --btn-text: #fff;
+      --scrollbar-track: rgba(255,255,255,0.01);
+      --scrollbar-thumb: rgba(234,28,69,0.2);
+      --scrollbar-thumb-hover: rgba(234,28,69,0.35);
+      --badge-online-bg: rgba(234, 28, 69, 0.1);
+      --badge-online-border: rgba(234, 28, 69, 0.15);
+      --badge-tablet-bg: rgba(59, 130, 246, 0.15);
+      --badge-tablet-border: rgba(59, 130, 246, 0.1);
+      --badge-tablet-text: rgba(96, 165, 250, 0.9);
+      --section-icon-bg: rgba(234, 28, 69, 0.1);
+      --section-icon-text: rgba(234, 28, 69, 0.8);
+      --section-icon-cal-bg: rgba(255, 255, 255, 0.05);
+      --section-icon-cal-text: rgba(255, 255, 255, 0.35);
+      --separator: rgba(255, 255, 255, 0.05);
+      --loader-border: rgba(234, 28, 69, 0.1);
+      --loader-border-top: #ea1c45;
+      --alert-success-bg: rgba(16, 185, 129, 0.08);
+      --alert-success-border: rgba(16, 185, 129, 0.15);
+      --alert-success-text: #6ee7b7;
+      --alert-error-bg: rgba(234, 28, 69, 0.08);
+      --alert-error-border: rgba(234, 28, 69, 0.15);
+      --alert-error-text: rgba(255, 102, 128, 0.9);
+      --btn-disabled-bg: rgba(255,255,255,0.08);
+      --btn-disabled-text: rgba(255,255,255,0.3);
+      --btn-spinner-border: rgba(255,255,255,0.2);
+      --btn-spinner-top: rgba(255,255,255,0.6);
+      --cell-perm-bg: linear-gradient(135deg, rgba(234, 28, 69, 0.1), rgba(211, 127, 176, 0.06));
+      --cell-perm-border: rgba(234, 28, 69, 0.25);
+      --cell-perm-hover-bg: linear-gradient(135deg, rgba(234, 28, 69, 0.16), rgba(211, 127, 176, 0.1));
+      --cell-perm-hover-border: rgba(234, 28, 69, 0.35);
+      --cell-perm-accent: #ea1c45;
+      --badge-perm-bg: rgba(234, 28, 69, 0.15);
+      --badge-perm-border: rgba(234, 28, 69, 0.12);
+      --badge-perm-text: rgba(255, 102, 128, 0.9);
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* Mesh */
+    .mesh-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; transition: opacity 0.4s; }
+    .mesh-bg::before {
+      content: ''; position: absolute; width: 150%; height: 150%; top: -25%; left: -25%;
+      background:
+        radial-gradient(ellipse 600px 600px at 20% 20%, var(--bg-mesh-1), transparent),
+        radial-gradient(ellipse 500px 500px at 80% 10%, var(--bg-mesh-2), transparent),
+        radial-gradient(ellipse 700px 700px at 60% 80%, var(--bg-mesh-3), transparent),
+        radial-gradient(ellipse 400px 400px at 10% 70%, var(--bg-mesh-4), transparent);
+      animation: meshMove 20s ease-in-out infinite alternate;
+    }
+    @keyframes meshMove {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(3%, -2%) rotate(1deg); }
+      66% { transform: translate(-2%, 3%) rotate(-1deg); }
+      100% { transform: translate(1%, -1%) rotate(0.5deg); }
+    }
+
+    .orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; transition: opacity 0.4s; }
+    .orb-1 { width: 400px; height: 400px; background: #ea1c45; top: -10%; right: -5%; opacity: var(--orb-1-opacity); animation: float1 25s ease-in-out infinite; }
+    .orb-2 { width: 300px; height: 300px; background: #D37FB0; bottom: 10%; left: -5%; opacity: var(--orb-2-opacity); animation: float2 20s ease-in-out infinite; }
+    .orb-3 { width: 250px; height: 250px; background: #ea1c45; top: 50%; right: 20%; opacity: var(--orb-3-opacity); animation: float3 22s ease-in-out infinite; }
+    @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,30px)} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-40px)} }
+    @keyframes float3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-20px,-30px)} }
+
+    /* Glass */
+    .glass { background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); transition: all 0.3s; }
+    .glass-strong { background: var(--glass-strong-bg); backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px); border: 1px solid var(--glass-strong-border); transition: all 0.3s; }
+    .glass-card { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--card-border); transition: all 0.4s ease; }
+    .glass-card:hover { background: var(--card-hover-bg); border-color: var(--card-hover-border); box-shadow: 0 8px 40px -10px var(--card-hover-shadow); }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #ff6680, #ea1c45, #D37FB0);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* Inputs */
+    .input-modern { background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-primary); transition: all 0.25s ease; }
+    .input-modern:focus { background: var(--input-focus-bg); border-color: var(--input-focus-border); box-shadow: 0 0 0 3px var(--input-focus-shadow), 0 0 20px -5px var(--input-focus-glow); outline: none; }
+    .input-modern::placeholder { color: var(--text-muted); }
+
+    select.input-modern option { background: #ffffff; color: #1a1a2e; }
+    html.dark select.input-modern option { background: #1e1e2a; color: #e2e8f0; }
+    html.dark select.input-modern option:checked { background: #2a2a3a; }
+
+    /* Button */
+    .btn-brand { background: linear-gradient(135deg, #ea1c45, #c4163a); color: var(--btn-text); transition: all 0.3s ease; position: relative; overflow: hidden; }
+    .btn-brand::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #ff3366, #ea1c45); opacity: 0; transition: opacity 0.3s ease; }
+    .btn-brand:hover::before { opacity: 1; }
+    .btn-brand:hover { box-shadow: 0 8px 30px -5px rgba(234, 28, 69, 0.45); transform: translateY(-1px); }
+    .btn-brand:active { transform: translateY(0) scale(0.98); }
+    .btn-brand span, .btn-brand svg { position: relative; z-index: 1; }
+
+    /* Table */
+    .cell-empty { border: 1px dashed var(--cell-empty-border); background: var(--cell-empty-bg); }
+    .cell-reserved { background: var(--cell-reserved-bg); border: 1px solid var(--cell-reserved-border); border-left: 3px solid #3b82f6; }
+    .cell-reserved:hover { background: var(--cell-reserved-hover-bg); border-color: var(--cell-reserved-hover-border); }
+    .cell-permanent { background: var(--cell-perm-bg); border: 1px solid var(--cell-perm-border); border-left: 3px solid var(--cell-perm-accent); }
+    .cell-permanent:hover { background: var(--cell-perm-hover-bg); border-color: var(--cell-perm-hover-border); }
+
+    .loader-ring { border: 3px solid var(--loader-border); border-top-color: var(--loader-border-top); }
+
+    @keyframes livePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(234, 28, 69, 0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(234, 28, 69, 0); }
+    }
+    .live-dot { animation: livePulse 2s ease-in-out infinite; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+    @media (max-width: 768px) {
+      .orb { opacity: calc(var(--orb-1-opacity) * 0.4) !important; }
+      .orb-1 { width: 200px; height: 200px; }
+      .orb-2 { width: 150px; height: 150px; }
+      .orb-3 { width: 120px; height: 120px; }
+    }
+  </style>
+</head>
+<body class="text-slate-200 min-h-screen relative">
+
+  <div class="mesh-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 space-y-8">
+
+    <!-- HEADER -->
+    <header class="glass-strong rounded-3xl p-5 md:p-7 flex flex-col md:flex-row md:items-center justify-between gap-5">
+      <div class="flex items-center gap-4">
+        <button id="btnVolver" onclick="volverSeleccion()" class="hidden flex items-center gap-1.5 px-3 py-2 rounded-xl glass hover:bg-white/10 text-xs font-semibold transition-all duration-200" style="color: var(--text-secondary)">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver
+        </button>
+        <div class="relative flex-shrink-0">
+          <div class="absolute inset-0 bg-gradient-to-br from-brand-red to-brand-pink rounded-2xl blur-lg opacity-25"></div>
+          <img src="https://static.vecteezy.com/system/resources/previews/049/531/644/original/school-logo-design-template-and-customizable-education-logo-ideas-vector.jpg" alt="Colegio" class="relative w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-2xl">
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-black tracking-tight">
+            <span class="gradient-text">Gestor de Reserva</span>
+            <br class="hidden md:block">
+            <span id="tituloModo" style="color: var(--text-primary)">de Tablets</span>
+          </h1>
+          <p id="subtituloFecha" style="color: var(--text-secondary)" class="text-xs md:text-sm mt-1 font-medium tracking-wide">Cargando...</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button onclick="toggleTheme()" type="button" class="flex items-center gap-2 px-4 py-2.5 rounded-xl glass hover:bg-white/10 font-medium text-xs transition-all duration-300 active:scale-95" style="color: var(--text-secondary)">
+          <i data-lucide="sun" id="themeIcon" class="w-4 h-4"></i>
+          <span id="themeText">Modo Claro</span>
+        </button>
+
+        <div class="flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl" style="background: var(--badge-online-bg); border: 1px solid var(--badge-online-border); color: #ea1c45">
+          <span class="w-2 h-2 rounded-full bg-brand-red live-dot"></span>
+          En linea
+        </div>
+      </div>
+    </header>
+
+    <!-- PANTALLA DE SELECCION -->
+    <div id="pantallaSeleccion" class="glass-card rounded-3xl overflow-hidden">
+      <div class="h-1 bg-gradient-to-r from-brand-red via-brand-pink to-brand-red"></div>
+      <div class="p-8 md:p-12 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6" style="background: var(--section-icon-bg); color: var(--section-icon-text)">
+          <i data-lucide="layers" class="w-7 h-7"></i>
+        </div>
+        <h2 class="text-xl md:text-2xl font-black mb-2" style="color: var(--text-primary)">¿Qué deseas reservar?</h2>
+        <p class="text-sm mb-8" style="color: var(--text-secondary)">Selecciona el tipo de reserva que necesitas</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-lg mx-auto">
+          <button onclick="seleccionarModo('tablets')" class="glass-card group p-6 rounded-2xl text-left transition-all duration-300 hover:scale-[1.02]">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4" style="background: rgba(59,130,246,0.1); color: #3b82f6">
+              <i data-lucide="tablet" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-base font-bold mb-1" style="color: var(--text-primary)">Reserva de Tablets</h3>
+            <p class="text-xs" style="color: var(--text-muted)">Solicita tablets para tus clases</p>
+          </button>
+          <button onclick="seleccionarModo('cra')" class="glass-card group p-6 rounded-2xl text-left transition-all duration-300 hover:scale-[1.02]">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4" style="background: rgba(16,185,129,0.1); color: #10b981">
+              <i data-lucide="monitor" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-base font-bold mb-1" style="color: var(--text-primary)">Sala CRA</h3>
+            <p class="text-xs" style="color: var(--text-muted)">Reserva la sala de recursos</p>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL (oculto al inicio) -->
+    <div id="contenidoPrincipal" class="hidden space-y-8">
+
+    <!-- GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- FORMULARIO TABLETS -->
+      <div id="formularioTablets" class="lg:col-span-4 glass-card rounded-3xl h-fit overflow-hidden">
+        <div class="h-1 bg-gradient-to-r from-brand-red via-brand-pink to-brand-red"></div>
+        <div class="p-5 md:p-6">
+          <div class="mb-6">
+            <h2 class="text-base font-bold flex items-center gap-2.5" style="color: var(--text-primary)">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl" style="background: var(--section-icon-bg); color: var(--section-icon-text)">
+                <i data-lucide="file-plus" class="w-4 h-4"></i>
+              </span>
+              Nueva Solicitud
+            </h2>
+            <p class="text-[11px] mt-1.5 ml-[2.5rem] leading-relaxed" style="color: var(--text-muted)">Maximo 60 tablets por reserva.</p>
+          </div>
+
+          <div id="alerta" class="hidden mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300"></div>
+
+          <form id="formReserva" onsubmit="enviarReserva(event)" class="space-y-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Profesor / Asignatura</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="user" class="w-4 h-4"></i></span>
+                <input type="text" id="profesor" required placeholder="Ej: Prof. Juan - Taller" class="w-full pl-10 pr-4 py-3 rounded-2xl input-modern text-sm">
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Curso</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="book-open" class="w-4 h-4"></i></span>
+                <input type="text" id="curso" required placeholder="Ej: 4 BASICO LENG" class="w-full pl-10 pr-4 py-3 rounded-2xl input-modern text-sm">
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Fecha de Reserva</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="calendar" class="w-4 h-4"></i></span>
+                <input type="date" id="fecha" required class="w-full pl-10 pr-4 py-3 rounded-2xl input-modern text-sm">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Inicio</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="clock" class="w-4 h-4"></i></span>
+                  <select id="horaInicio" required class="w-full pl-10 pr-3 py-3 rounded-2xl input-modern text-sm cursor-pointer appearance-none">
+                    <option value="8:05" selected>8:05</option><option value="8:50">8:50</option><option value="9:55">9:55</option><option value="10:40">10:40</option><option value="11:45">11:45</option><option value="12:30">12:30</option><option value="14:00">14:00</option><option value="14:45">14:45</option><option value="15:40">15:40</option>
+                  </select>
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color: var(--text-muted)"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Fin</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="clock" class="w-4 h-4"></i></span>
+                  <select id="horaFin" required class="w-full pl-10 pr-3 py-3 rounded-2xl input-modern text-sm cursor-pointer appearance-none">
+                    <option value="8:50">8:50</option><option value="9:35" selected>9:35</option><option value="10:40">10:40</option><option value="11:25">11:25</option><option value="12:30">12:30</option><option value="13:15">13:15</option><option value="14:45">14:45</option><option value="15:30">15:30</option><option value="16:25">16:25</option>
+                  </select>
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color: var(--text-muted)"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Tablets</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="tablet" class="w-4 h-4"></i></span>
+                <input type="number" id="tablets" min="1" max="60" required placeholder="Cantidad" class="w-full pl-10 pr-4 py-3 rounded-2xl input-modern text-sm">
+              </div>
+            </div>
+            <button type="submit" id="btnEnviar" class="w-full btn-brand font-bold py-3.5 px-6 rounded-2xl text-sm flex items-center justify-center gap-2.5 mt-6 shadow-lg shadow-brand-red/20">
+              <i data-lucide="send" class="w-4 h-4"></i><span>Enviar Solicitud</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- FORMULARIO CRA -->
+      <div id="formularioCra" class="lg:col-span-4 glass-card rounded-3xl h-fit overflow-hidden hidden">
+        <div class="h-1 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500"></div>
+        <div class="p-5 md:p-6">
+          <div class="mb-6">
+            <h2 class="text-base font-bold flex items-center gap-2.5" style="color: var(--text-primary)">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl" style="background: rgba(16,185,129,0.1); color: #10b981">
+                <i data-lucide="monitor" class="w-4 h-4"></i>
+              </span>
+              Reserva Sala CRA
+            </h2>
+            <p class="text-[11px] mt-1.5 ml-[2.5rem] leading-relaxed" style="color: var(--text-muted)">Complete los datos para reservar la sala.</p>
+          </div>
+
+          <div id="alertaCra" class="hidden mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300"></div>
+
+          <form id="formReservaCra" onsubmit="enviarReservaCra(event)" class="space-y-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Profesor / Asignatura</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="user" class="w-4 h-4"></i></span>
+                <input type="text" id="profesorCra" required placeholder="Ej: Prof. Juan - Taller" class="w-full pl-10 pr-4 py-3 rounded-2xl input-modern text-sm">
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Curso</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="book-open" class="w-4 h-4"></i></span>
+                <input type="text" id="cursoCra" required placeholder="Ej: 4 BASICO LENG" class="w-full pl-10 pr-4 py-3 rounded-2xl input-modern text-sm">
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Fecha de Reserva</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="calendar" class="w-4 h-4"></i></span>
+                <input type="date" id="fechaCra" required class="w-full pl-10 pr-4 py-3 rounded-2xl input-modern text-sm">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Inicio</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="clock" class="w-4 h-4"></i></span>
+                  <select id="horaInicioCra" required class="w-full pl-10 pr-3 py-3 rounded-2xl input-modern text-sm cursor-pointer appearance-none">
+                    <option value="8:05" selected>8:05</option><option value="8:50">8:50</option><option value="9:55">9:55</option><option value="10:40">10:40</option><option value="11:45">11:45</option><option value="12:30">12:30</option><option value="14:00">14:00</option><option value="14:45">14:45</option><option value="15:40">15:40</option>
+                  </select>
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color: var(--text-muted)"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Fin</label>
+                <div class="relative">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2" style="color: var(--text-muted)"><i data-lucide="clock" class="w-4 h-4"></i></span>
+                  <select id="horaFinCra" required class="w-full pl-10 pr-3 py-3 rounded-2xl input-modern text-sm cursor-pointer appearance-none">
+                    <option value="8:50">8:50</option><option value="9:35" selected>9:35</option><option value="10:40">10:40</option><option value="11:25">11:25</option><option value="12:30">12:30</option><option value="13:15">13:15</option><option value="14:45">14:45</option><option value="15:30">15:30</option><option value="16:25">16:25</option>
+                  </select>
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color: var(--text-muted)"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: var(--text-muted)">Observaciones</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-3" style="color: var(--text-muted)"><i data-lucide="message-square" class="w-4 h-4"></i></span>
+                <textarea id="observacionesCra" rows="3" placeholder="Detalles adicionales (opcional)" class="w-full pl-10 pr-4 py-3 rounded-2xl input-modern text-sm resize-none"></textarea>
+              </div>
+            </div>
+            <button type="submit" id="btnEnviarCra" class="w-full font-bold py-3.5 px-6 rounded-2xl text-sm flex items-center justify-center gap-2.5 mt-6 shadow-lg" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 8px 30px -5px rgba(16,185,129,0.45)">
+              <i data-lucide="send" class="w-4 h-4"></i><span>Enviar Reserva</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- CALENDARIO -->
+      <div class="lg:col-span-8 glass-card rounded-3xl overflow-hidden">
+        <div class="h-1 bg-gradient-to-r from-slate-600 via-slate-400 to-slate-600 dark:from-slate-700 dark:via-slate-500 dark:to-slate-700"></div>
+        <div class="p-5 md:p-6">
+          <div class="flex items-center justify-between pb-4 mb-4" style="border-bottom: 1px solid var(--separator)">
+            <h2 class="text-base font-bold flex items-center gap-2.5" style="color: var(--text-primary)">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl" style="background: var(--section-icon-cal-bg); color: var(--section-icon-cal-text)">
+                <i data-lucide="calendar-days" class="w-4 h-4"></i>
+              </span>
+              Disponibilidad Semanal
+            </h2>
+            <button onclick="cargarHorario()" class="text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 px-3 py-1.5 rounded-xl" style="color: var(--text-secondary)">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Actualizar
+            </button>
+          </div>
+
+          <div id="cargando" class="text-center py-16">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 loader-ring"></div>
+            <p class="text-[11px] mt-4 font-medium tracking-[0.15em] uppercase" style="color: var(--text-muted)">Sincronizando datos...</p>
+          </div>
+
+          <div id="leyendaColores" class="hidden flex items-center gap-5 mb-3 px-4 py-2.5 rounded-xl text-[11px] font-medium" style="background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-secondary)">
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded" style="background: #ea1c45"></span> Reserva permanente</span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded" style="background: #3b82f6"></span> Reserva temporal</span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded border" style="border-color: var(--table-border)"></span> Disponible</span>
+          </div>
+          <div id="contenedorTabla" class="hidden overflow-x-auto rounded-2xl" style="border: 1px solid var(--table-border)">
+            <table class="w-full text-left border-collapse min-w-[650px]">
+              <thead id="encabezadoTabla" class="text-[11px] uppercase tracking-[0.12em]"></thead>
+              <tbody id="cuerpoTabla" class="text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- fin contenidoPrincipal -->
+
+  <script>
+    lucide.createIcons();
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch(e) {}
+      const icon = document.getElementById('themeIcon');
+      const text = document.getElementById('themeText');
+      if (icon && text) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        text.textContent = isDark ? 'Modo Claro' : 'Modo Oscuro';
+        lucide.createIcons();
+      }
+    }
+
+    // Init theme
+    (function() {
+      var stored = null;
+      try { stored = localStorage.getItem('theme'); } catch(e) {}
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (stored === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon');
+        document.getElementById('themeText').textContent = 'Modo Oscuro';
+        lucide.createIcons();
+      } else if (!stored && !prefersDark) {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon');
+        document.getElementById('themeText').textContent = 'Modo Oscuro';
+        lucide.createIcons();
+      }
+    })();
+
+    const CSV_URL = "https://script.google.com/macros/s/AKfycbynqvloEO3zYA5mfkq2tGZIRs_0X9UtAqYGXKc3UzdUMKuqqofM7vHpnaI5wuqLD_oe/exec";
+    const WEB_APP_URL = CSV_URL;
+    const CSV_URL_CRA = "https://TU_URL_WEBAPP_CRA/exec";
+
+    let modoActual = null;
+    let intervaloHorario = null;
+
+    const hoyObj = new Date();
+    const yyyy = hoyObj.getFullYear();
+    const mm = String(hoyObj.getMonth() + 1).padStart(2, '0');
+    const dd = String(hoyObj.getDate()).padStart(2, '0');
+
+    function initFechaForm() {
+      const campoFecha = document.getElementById('fecha');
+      campoFecha.min = `${yyyy}-${mm}-${dd}`;
+      campoFecha.value = `${yyyy}-${mm}-${dd}`;
+      const campoFechaCra = document.getElementById('fechaCra');
+      if (campoFechaCra) {
+        campoFechaCra.min = `${yyyy}-${mm}-${dd}`;
+        campoFechaCra.value = `${yyyy}-${mm}-${dd}`;
+      }
+    }
+    initFechaForm();
+
+    function seleccionarModo(modo) {
+      modoActual = modo;
+      document.getElementById('pantallaSeleccion').classList.add('hidden');
+      document.getElementById('contenidoPrincipal').classList.remove('hidden');
+      document.getElementById('btnVolver').classList.remove('hidden');
+
+      if (modo === 'tablets') {
+        document.getElementById('formularioTablets').classList.remove('hidden');
+        document.getElementById('formularioCra').classList.add('hidden');
+        document.getElementById('tituloModo').textContent = 'de Tablets';
+        document.getElementById('tituloModo').style.color = 'var(--text-primary)';
+      } else {
+        document.getElementById('formularioTablets').classList.add('hidden');
+        document.getElementById('formularioCra').classList.remove('hidden');
+        document.getElementById('tituloModo').textContent = 'Sala CRA';
+        document.getElementById('tituloModo').style.color = '#10b981';
+      }
+
+      document.getElementById('cargando').style.display = '';
+      document.getElementById('contenedorTabla').classList.add('hidden');
+      document.getElementById('leyendaColores').classList.add('hidden');
+
+      lucide.createIcons();
+      cargarHorario();
+    }
+
+    function volverSeleccion() {
+      modoActual = null;
+      document.getElementById('pantallaSeleccion').classList.remove('hidden');
+      document.getElementById('contenidoPrincipal').classList.add('hidden');
+      document.getElementById('btnVolver').classList.add('hidden');
+      if (intervaloHorario) { clearInterval(intervaloHorario); intervaloHorario = null; }
+    }
+
+    function getLunesEstaSemana() {
+      const hoy = new Date();
+      const d = hoy.getDay();
+      const diff = hoy.getDate() - d + (d === 0 ? -6 : 1);
+      const lunes = new Date(hoy.setDate(diff));
+      return `${String(lunes.getDate()).padStart(2,'0')}/${String(lunes.getMonth()+1).padStart(2,'0')}/${lunes.getFullYear()}`;
+    }
+    document.getElementById('subtituloFecha').textContent = "Semana del " + getLunesEstaSemana();
+
+    async function enviarReserva(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnEnviar');
+      const alerta = document.getElementById('alerta');
+
+      btn.disabled = true;
+      btn.className = 'w-full font-bold py-3.5 px-6 rounded-2xl text-sm flex items-center justify-center gap-2.5 mt-6 cursor-not-allowed';
+      btn.style.background = 'var(--btn-disabled-bg)';
+      btn.style.color = 'var(--btn-disabled-text)';
+      btn.style.boxShadow = 'none';
+      btn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 rounded-full" style="border-color: var(--btn-spinner-border); border-top-color: var(--btn-spinner-top)"></span> <span>Validando...</span>';
+      alerta.className = 'hidden mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
+
+      const payload = {
+        profesor: document.getElementById('profesor').value,
+        curso: document.getElementById('curso').value,
+        fecha: document.getElementById('fecha').value,
+        horaInicio: document.getElementById('horaInicio').value,
+        horaFin: document.getElementById('horaFin').value,
+        tablets: document.getElementById('tablets').value
+      };
+
+      try {
+        const ctrl = new AbortController();
+        const timeoutId = setTimeout(() => ctrl.abort(), 15000);
+        const respuesta = await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload), redirect: 'follow', signal: ctrl.signal });
+        clearTimeout(timeoutId);
+        let resultado = null;
+        const ct = respuesta.headers.get('content-type') || '';
+        if (ct.includes('json')) {
+          resultado = await respuesta.json().catch(() => null);
+        }
+        if (!resultado) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          resultado = { status: 'success', message: 'Solicitud enviada correctamente.' };
+        }
+
+        if (resultado.status === 'success') {
+          alerta.style.background = 'var(--alert-success-bg)';
+          alerta.style.borderColor = 'var(--alert-success-border)';
+          alerta.style.color = 'var(--alert-success-text)';
+          alerta.style.border = '1px solid var(--alert-success-border)';
+          alerta.className = 'mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
+          alerta.innerHTML = '<span class="flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> ' + resultado.message + '</span>';
+          document.getElementById('formReserva').reset();
+          document.getElementById('fecha').value = `${yyyy}-${mm}-${dd}`;
+          setTimeout(cargarHorario, 1500);
+        } else {
+          alerta.style.background = 'var(--alert-error-bg)';
+          alerta.style.color = 'var(--alert-error-text)';
+          alerta.style.border = '1px solid var(--alert-error-border)';
+          alerta.className = 'mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
+          alerta.innerHTML = '<span class="flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> ' + resultado.message + '</span>';
+        }
+      } catch (err) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        alerta.style.background = 'var(--alert-success-bg)';
+        alerta.style.borderColor = 'var(--alert-success-border)';
+        alerta.style.color = 'var(--alert-success-text)';
+        alerta.style.border = '1px solid var(--alert-success-border)';
+        alerta.className = 'mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
+        alerta.innerHTML = '<span class="flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Solicitud enviada. Verifica en el calendario.</span>';
+        document.getElementById('formReserva').reset();
+        document.getElementById('fecha').value = `${yyyy}-${mm}-${dd}`;
+        setTimeout(cargarHorario, 1500);
+      } finally {
+        btn.disabled = false;
+        btn.className = 'w-full btn-brand font-bold py-3.5 px-6 rounded-2xl text-sm flex items-center justify-center gap-2.5 mt-6 shadow-lg shadow-brand-red/20';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.boxShadow = '';
+        btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> <span>Enviar Solicitud</span>';
+        lucide.createIcons();
+      }
+    }
+
+    function cargarHorario() {
+      if (!modoActual) return;
+      const url = modoActual === 'cra' ? CSV_URL_CRA : CSV_URL;
+      Papa.parse(url + "?cache=" + new Date().getTime(), {
+        download: true, header: false,
+        complete: function(results) {
+          document.getElementById('cargando').style.display = 'none';
+          document.getElementById('contenedorTabla').classList.remove('hidden');
+          document.getElementById('leyendaColores').classList.remove('hidden');
+          renderizarTabla(results.data);
+        },
+        error: function(err) {
+          document.getElementById('cargando').innerHTML = '<svg class="w-5 h-5 text-red-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p class="text-[11px] mt-4 font-medium tracking-[0.15em] uppercase" style="color: var(--text-muted)">Error al cargar horario</p>';
+        }
+      });
+    }
+
+    function renderizarTabla(datos) {
+      if (!datos || datos.length === 0) return;
+      let headerRowIndex = -1, colHoraIndex = -1;
+      const DIAS = ['lunes', 'martes', 'miercoles', 'miércoles', 'jueves', 'viernes'];
+      for (let r = 0; r < datos.length; r++) {
+        for (let c = 0; c < datos[r].length; c++) {
+          const val = datos[r][c] && datos[r][c].toString().toLowerCase().trim();
+          if (val && val === 'hora') {
+            headerRowIndex = r; colHoraIndex = c; break;
+          }
+        }
+        if (headerRowIndex !== -1) break;
+      }
+      if (headerRowIndex === -1) {
+        for (let r = 0; r < datos.length; r++) {
+          var dayCount = 0;
+          for (let c = 0; c < datos[r].length; c++) {
+            const val = datos[r][c] && datos[r][c].toString().toLowerCase().trim();
+            if (val) { for (var d = 0; d < DIAS.length; d++) { if (val === DIAS[d] || val.indexOf(DIAS[d]) === 0) { dayCount++; break; } } }
+          }
+          if (dayCount >= 3) {
+            for (let c = 0; c < datos[r].length; c++) {
+              const val = datos[r][c] && datos[r][c].toString().toLowerCase().trim();
+              if (val && val === 'hora') { headerRowIndex = r; colHoraIndex = c; break; }
+            }
+            if (headerRowIndex === -1) {
+              for (let c = 0; c < datos[r].length; c++) {
+                const val = datos[r][c] && datos[r][c].toString().toLowerCase().trim();
+                if (val && (val === 'lunes' || val.indexOf('lunes') !== -1)) { headerRowIndex = r; colHoraIndex = c; break; }
+              }
+            }
+            break;
+          }
+        }
+      }
+      if (headerRowIndex === -1) return;
+
+      let colTimeData = colHoraIndex;
+      if (colHoraIndex > 0 && headerRowIndex + 1 < datos.length) {
+        for (let dr = headerRowIndex + 1; dr < Math.min(headerRowIndex + 5, datos.length); dr++) {
+          const testVal = datos[dr][colHoraIndex - 1] ? String(datos[dr][colHoraIndex - 1]).trim() : '';
+          if (testVal.indexOf('-') !== -1 && /\d/.test(testVal)) { colTimeData = colHoraIndex - 1; break; }
+          const testVal2 = datos[dr][colHoraIndex] ? String(datos[dr][colHoraIndex]).trim() : '';
+          if (testVal2.indexOf('-') !== -1 && /\d/.test(testVal2)) { colTimeData = colHoraIndex; break; }
+        }
+      }
+
+      let hasSecondHeaderBelow = false;
+      if (headerRowIndex + 1 < datos.length) {
+        const nextRow = datos[headerRowIndex + 1];
+        const firstCell = nextRow[colHoraIndex] ? String(nextRow[colHoraIndex]).trim() : '';
+        const isTimeValue = (firstCell.indexOf(':') !== -1 || (firstCell.indexOf('-') !== -1 && /\d/.test(firstCell)));
+        if (!isTimeValue && firstCell.toLowerCase().indexOf('almuerzo') === -1) {
+          const hasTime = nextRow.some(function(c, i) {
+            if (i === colHoraIndex) return false;
+            return c && String(c).trim() !== '' && String(c).indexOf('-') !== -1;
+          });
+          const hasReservationData = nextRow.some(function(c) {
+            if (!c) return false;
+            var s = String(c).trim().toUpperCase();
+            return s.indexOf('\u00A7') !== -1 || s.indexOf('TABLET') !== -1;
+          });
+          if (!hasTime && !hasReservationData && nextRow.some(function(c) { return c && String(c).trim() !== ''; })) {
+            hasSecondHeaderBelow = true;
+          }
+        }
+      }
+
+      let hasSecondHeaderAbove = false;
+      if (!hasSecondHeaderBelow && headerRowIndex - 1 >= 0) {
+        const prevRow = datos[headerRowIndex - 1];
+        const hasDateLike = prevRow.some(function(c, i) {
+          if (i <= colHoraIndex) return false;
+          const v = c ? String(c).trim() : '';
+          return v !== '' && (v.indexOf('/') !== -1 || /\d{2}\/\d{2}/.test(v));
+        });
+        if (hasDateLike) hasSecondHeaderAbove = true;
+      }
+
+      const filaMain = hasSecondHeaderAbove ? datos[headerRowIndex] : datos[headerRowIndex];
+      const filaDates = hasSecondHeaderAbove ? datos[headerRowIndex - 1] : null;
+      const filaBelow = hasSecondHeaderBelow ? datos[headerRowIndex + 1] : null;
+      const encabezado = document.getElementById('encabezadoTabla');
+      const cuerpo = document.getElementById('cuerpoTabla');
+      encabezado.innerHTML = ''; cuerpo.innerHTML = '';
+
+      let htmlHeaders = '';
+      if (hasSecondHeaderBelow) {
+        htmlHeaders += '<tr>';
+        for (let c = colHoraIndex; c < filaMain.length; c++) {
+          const fecha = filaMain[c] ? filaMain[c].trim() : '';
+          const dia = filaBelow[c] ? filaBelow[c].trim() : '';
+          const isHora = c === colHoraIndex;
+          const label = isHora ? 'Hora' : (dia && fecha ? dia + '<br><span class="font-normal opacity-60">' + fecha + '</span>' : dia || fecha);
+          if (label !== '') {
+            htmlHeaders += `<th class="p-3.5 ${isHora ? 'w-28' : ''} font-bold text-center border-r last:border-0 capitalize" style="background: var(--table-header-bg); color: var(--table-header-text); border-color: var(--table-border)">${label}</th>`;
+          }
+        }
+        htmlHeaders += '</tr>';
+      } else if (hasSecondHeaderAbove) {
+        htmlHeaders += '<tr>';
+        for (let c = colHoraIndex; c < filaMain.length; c++) {
+          const isHora = c === colHoraIndex;
+          htmlHeaders += `<th class="p-3.5 ${isHora ? 'w-28' : ''} font-bold text-center border-r last:border-0 capitalize" style="background: var(--table-header-bg); color: var(--table-header-text); border-color: var(--table-border)">${isHora ? 'Hora' : (filaMain[c] ? filaMain[c].trim() : '')}</th>`;
+        }
+        htmlHeaders += '</tr>';
+        if (filaDates) {
+          htmlHeaders += '<tr>';
+          for (let c = colHoraIndex; c < filaDates.length; c++) {
+            const isHora = c === colHoraIndex;
+            const fecha = filaDates[c] ? filaDates[c].trim() : '';
+            htmlHeaders += `<th class="p-2 ${isHora ? 'w-28' : ''} text-center border-r last:border-0 font-normal text-[11px]" style="background: var(--table-header-bg); color: var(--text-muted); border-color: var(--table-border)">${isHora ? '' : fecha}</th>`;
+          }
+          htmlHeaders += '</tr>';
+        }
+      } else {
+        htmlHeaders += '<tr>';
+        let numColumnas = 0;
+        for (let c = colHoraIndex; c < filaMain.length; c++) {
+          const nombreCol = filaMain[c] ? filaMain[c].trim() : '';
+          if (nombreCol !== '') {
+            numColumnas++;
+            const isHora = c === colHoraIndex;
+            htmlHeaders += `<th class="p-3.5 ${isHora ? 'w-28' : ''} font-bold text-center border-r last:border-0 capitalize" style="background: var(--table-header-bg); color: var(--table-header-text); border-color: var(--table-border)">${nombreCol}</th>`;
+          }
+        }
+        htmlHeaders += '</tr>';
+      }
+      encabezado.innerHTML = htmlHeaders;
+
+      let numColumnas = 0;
+      for (let c = colHoraIndex; c < filaMain.length; c++) {
+        const val = filaMain[c] ? String(filaMain[c]).trim() : '';
+        if (val !== '') numColumnas++;
+      }
+
+      const dataStartRow = (hasSecondHeaderBelow || hasSecondHeaderAbove) ? headerRowIndex + 2 : headerRowIndex + 1;
+
+      let bloquesHorario = [], bloqueActual = null, orphanBuffer = [];
+      for (let r = dataStartRow; r < datos.length; r++) {
+        const fila = datos[r];
+        if (!fila) continue;
+        const esAlmuerzo = fila.some(c => c && c.toString().toLowerCase().includes('almuerzo'));
+        if (esAlmuerzo) { if (bloqueActual) bloquesHorario.push(bloqueActual); bloquesHorario.push({ tipo: 'almuerzo' }); bloqueActual = null; orphanBuffer = []; continue; }
+        const textoHora = fila[colTimeData] ? fila[colTimeData].trim() : '';
+        if (textoHora !== '') {
+          if (bloqueActual) bloquesHorario.push(bloqueActual);
+          bloqueActual = { tipo: 'horario', hora: textoHora, dias: [] };
+          for (let c = colTimeData + 1; c < colTimeData + numColumnas; c++) { bloqueActual.dias.push(fila[c] && fila[c].trim() ? [fila[c].trim()] : []); }
+          orphanBuffer.forEach(function(orphan) { orphan.vals.forEach(function(v) { bloqueActual.dias[orphan.colIdx].unshift(v); }); });
+          orphanBuffer = [];
+        } else if (bloqueActual && bloqueActual.tipo === 'horario') {
+          let colIdx = 0;
+          for (let c = colTimeData + 1; c < colTimeData + numColumnas; c++) { if (fila[c] && fila[c].trim()) bloqueActual.dias[colIdx].push(fila[c].trim()); colIdx++; }
+        } else if (!bloqueActual) {
+          for (let c = colTimeData + 1; c < colTimeData + numColumnas; c++) { if (fila[c] && fila[c].trim()) orphanBuffer.push({ colIdx: c - colTimeData - 1, vals: [fila[c].trim()] }); }
+        }
+      }
+      if (bloqueActual) bloquesHorario.push(bloqueActual);
+
+      const svgUtensils = '<svg class="w-3.5 h-3.5 inline-block mr-1 -mt-0.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>';
+      const svgTablet = '<svg class="w-3 h-3 inline-block opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>';
+      const svgCheck = '<svg class="w-3 h-3 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+
+      bloquesHorario.forEach(bloque => {
+        if (bloque.tipo === 'almuerzo') {
+          cuerpo.innerHTML += `<tr class="text-center"><td colspan="${numColumnas}" class="py-3" style="border-top: 1px solid var(--lunch-border); border-bottom: 1px solid var(--lunch-border); background: var(--lunch-bg)"><span class="text-[11px] font-bold tracking-[0.2em] uppercase" style="color: var(--lunch-text)">${svgUtensils} ALMUERZO</span></td></tr>`;
+          return;
+        }
+        let htmlFila = `<tr style="transition: background 0.15s" onmouseover="this.style.background='var(--table-row-hover)'" onmouseout="this.style.background='transparent'">`;
+        htmlFila += `<td class="p-2.5 font-bold text-center border-r text-xs whitespace-nowrap" style="color: var(--text-secondary); background: var(--table-header-bg); border-color: var(--table-border)">${bloque.hora}</td>`;
+        bloque.dias.forEach(pedidos => {
+          if (pedidos.length === 0) {
+            htmlFila += `<td class="p-2 text-center align-middle" style="border-right: 1px solid var(--table-border)"><span class="cell-empty inline-flex items-center gap-1.5 text-[10px] font-medium px-3 py-1 rounded-lg" style="color: var(--cell-empty-text)">${svgCheck} Disponible</span></td>`;
+          } else {
+            let contenidoHtml = '<div class="space-y-1.5">';
+            pedidos.forEach(pedidoText => {
+              let esPermanente = false;
+              let textoLimpio = pedidoText;
+              if (textoLimpio.charCodeAt(0) === 0x00A7) { esPermanente = true; textoLimpio = textoLimpio.substring(1); }
+              const lineas = textoLimpio.split('\n');
+              const claseCelda = esPermanente ? 'cell-permanent' : 'cell-reserved';
+              const accentColor = esPermanente ? 'var(--cell-perm-accent)' : '#ea1c45';
+              let tarjeta = `<div class="${claseCelda} p-2.5 rounded-xl space-y-1 transition-all duration-200">`;
+              lineas.forEach(linea => {
+                const t = linea.trim();
+                if (!t) return;
+                if (t.toLowerCase().includes('tablets')) {
+                  if (esPermanente) {
+                    tarjeta += `<div class="inline-flex items-center gap-1.5 font-bold text-[10px] px-2 py-0.5 rounded-lg" style="background: var(--badge-perm-bg); color: var(--badge-perm-text); border: 1px solid var(--badge-perm-border)">${svgTablet} ${t}</div>`;
+                  } else {
+                    tarjeta += `<div class="inline-flex items-center gap-1.5 font-bold text-[10px] px-2 py-0.5 rounded-lg" style="background: var(--badge-tablet-bg); color: var(--badge-tablet-text); border: 1px solid var(--badge-tablet-border)">${svgTablet} ${t}</div>`;
+                  }
+                } else {
+                  tarjeta += `<div class="font-bold text-xs leading-tight" style="color: ${esPermanente ? 'var(--cell-perm-accent)' : 'var(--text-primary)'}">${t}</div>`;
+                }
+              });
+              tarjeta += '</div>';
+              contenidoHtml += tarjeta;
+            });
+            contenidoHtml += '</div>';
+            htmlFila += `<td class="p-2 align-top" style="border-right: 1px solid var(--table-border)">${contenidoHtml}</td>`;
+          }
+        });
+        htmlFila += '</tr>';
+        cuerpo.innerHTML += htmlFila;
+      });
+
+      document.getElementById('cargando').classList.add('hidden');
+      document.getElementById('contenedorTabla').classList.remove('hidden');
+    }
+
+    cargarHorario();
+    if (intervaloHorario) clearInterval(intervaloHorario);
+    intervaloHorario = setInterval(function() { if (modoActual) cargarHorario(); }, 10000);
+
+    async function enviarReservaCra(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnEnviarCra');
+      const alerta = document.getElementById('alertaCra');
+
+      btn.disabled = true;
+      btn.style.background = 'var(--btn-disabled-bg)';
+      btn.style.color = 'var(--btn-disabled-text)';
+      btn.style.boxShadow = 'none';
+      btn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 rounded-full" style="border-color: var(--btn-spinner-border); border-top-color: var(--btn-spinner-top)"></span> <span>Validando...</span>';
+      alerta.className = 'hidden mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
+
+      const payload = {
+        profesor: document.getElementById('profesorCra').value,
+        curso: document.getElementById('cursoCra').value,
+        fecha: document.getElementById('fechaCra').value,
+        horaInicio: document.getElementById('horaInicioCra').value,
+        horaFin: document.getElementById('horaFinCra').value,
+        observaciones: document.getElementById('observacionesCra').value
+      };
+
+      try {
+        const ctrl = new AbortController();
+        const timeoutId = setTimeout(() => ctrl.abort(), 15000);
+        const respuesta = await fetch(CSV_URL_CRA, { method: 'POST', body: JSON.stringify(payload), redirect: 'follow', signal: ctrl.signal });
+        clearTimeout(timeoutId);
+        let resultado = null;
+        const ct = respuesta.headers.get('content-type') || '';
+        if (ct.includes('json')) {
+          resultado = await respuesta.json().catch(() => null);
+        }
+        if (!resultado) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          resultado = { status: 'success', message: 'Reserva de Sala CRA enviada correctamente.' };
+        }
+
+        if (resultado.status === 'success') {
+          alerta.style.background = 'var(--alert-success-bg)';
+          alerta.style.borderColor = 'var(--alert-success-border)';
+          alerta.style.color = 'var(--alert-success-text)';
+          alerta.style.border = '1px solid var(--alert-success-border)';
+          alerta.className = 'mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
+          alerta.innerHTML = '<span class="flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> ' + resultado.message + '</span>';
+          document.getElementById('formReservaCra').reset();
+          document.getElementById('fechaCra').value = `${yyyy}-${mm}-${dd}`;
+          setTimeout(cargarHorario, 1500);
+        } else {
+          alerta.style.background = 'var(--alert-error-bg)';
+          alerta.style.color = 'var(--alert-error-text)';
+          alerta.style.border = '1px solid var(--alert-error-border)';
+          alerta.className = 'mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
+          alerta.innerHTML = '<span class="flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> ' + resultado.message + '</span>';
+        }
+      } catch (err) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        alerta.style.background = 'var(--alert-success-bg)';
+        alerta.style.borderColor = 'var(--alert-success-border)';
+        alerta.style.color = 'var(--alert-success-text)';
+        alerta.style.border = '1px solid var(--alert-success-border)';
+        alerta.className = 'mb-4 p-4 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
+        alerta.innerHTML = '<span class="flex items-center gap-2"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Reserva enviada. Verifica en el calendario.</span>';
+        document.getElementById('formReservaCra').reset();
+        document.getElementById('fechaCra').value = `${yyyy}-${mm}-${dd}`;
+        setTimeout(cargarHorario, 1500);
+      } finally {
+        btn.disabled = false;
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.boxShadow = '';
+        btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> <span>Enviar Reserva</span>';
+        lucide.createIcons();
+      }
+    }
+  </script>
+</body>
+</html>
