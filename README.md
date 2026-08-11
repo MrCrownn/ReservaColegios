@@ -58,10 +58,15 @@ Las plantillas muestran la estructura exacta de cada spreadsheet (nombres de hoj
 ## Demo
 
 Para ver el funcionamiento de este proyecto se puede visitar la url.
+
    https://sites.google.com/view/prueba-pag-gestor/web-prueba
+   
    Además, si se quiere ver los google sheets utilizados.
+   
    https://docs.google.com/spreadsheets/d/1Q-zxLnxYTneZm-qBFq1PcGDXVN8lHe7sAi3kssPDzkg/edit?usp=sharing
+   
    https://docs.google.com/spreadsheets/d/10Ca80sLRdRskZLzuZTHC3hmZNB9tG_4Ak_u1QuBH2Fo/edit?usp=sharing
+   
    
 
 ## Nota de seguridad
