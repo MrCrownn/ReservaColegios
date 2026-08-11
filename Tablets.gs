@@ -1,5 +1,5 @@
 ﻿/*
- * RESERVAS DE TABLETS - Colegio El Alba de Macul
+ * RESERVAS DE TABLETS
  * Backend unico para Apps Script (Google Sheets).
  *
  * - doGet: entrega el horario semanal como CSV al frontend.
