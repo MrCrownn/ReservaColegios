@@ -1,4 +1,4 @@
-# Sistema de Reservas — Colegio El Alba de Macul
+# Sistema de Reservas 
 
 Sistema de reservas de **Tablets** y **Sala** sobre Google Sheets + Apps Script, con frontend embebido en Google Sites.
 
@@ -33,7 +33,7 @@ Antes de desplegar, reemplaza los valores sensibles (marcados con `TU_...`):
 ## Estructura de hojas (Google Sheets)
 
 ### Tablets
-- **Solicitudes** — pedidos registrados: `Profesor`, `Cantidad`, `Fecha`, `Curso`, `HoraInicio`, `HoraFin`, `Estado`, `Comentarios`, `Checkbox (J)`, `Errores (K)`.
+- **Solicitudes** — pedidos registrados: `Profesor  (Columna A)`, `Cantidad  (Columna B) `, `Fecha  (Columna C)`, `Curso  (Columna D)`, `HoraInicio  (Columna E)`, `HoraFin  (Columna F)`, `Estado  (Columna G)`, `Comentarios (Columna I)`, `Checkbox (Columna J)`, `Errores (Columna K)`.
 - **Profes** — diccionario de profesores: `Nombre`, `Apellido`, `Correo`.
 - **Horario semanal** — columna `Hora` + columnas por día. Celdas coloreadas = reserva.
 
@@ -55,6 +55,17 @@ Antes de desplegar, reemplaza los valores sensibles (marcados con `TU_...`):
 ## Plantillas
 
 Las plantillas muestran la estructura exacta de cada spreadsheet (nombres de hojas, columnas, fórmulas, colores y validaciones) sin datos reales. Úsalas como referencia para replicar la estructura en Google Sheets.
+## Demo
 
-## Nota de seguridad
-Los archivos `.xlsx` con datos reales están excluidos del repositorio (`.gitignore`); solo se suben las plantillas (`Plantilla*.xlsx`). No subas datos personales de profesores ni claves a GitHub.
+Para ver el funcionamiento de este proyecto se puede visitar la url.
+
+   https://sites.google.com/view/prueba-pag-gestor/web-prueba
+   
+   Además, si se quiere ver los google sheets utilizados.
+   
+   https://docs.google.com/spreadsheets/d/1Q-zxLnxYTneZm-qBFq1PcGDXVN8lHe7sAi3kssPDzkg/edit?usp=sharing
+   
+   https://docs.google.com/spreadsheets/d/10Ca80sLRdRskZLzuZTHC3hmZNB9tG_4Ak_u1QuBH2Fo/edit?usp=sharing
+   
+   
+
