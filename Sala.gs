@@ -1,8 +1,8 @@
-﻿// === CONFIGURACION ===
+// === CONFIGURACION ===
 const NOMBRE_HOJA_SOLICITUDES = "Solicitudes";
 const NOMBRE_HOJA_HORARIO = "Horario";
 const NOMBRE_HOJA_PROFESORES = "Profes";
-const DIAS_BUSCAR = ['lunes', 'martes', 'miercoles', 'miÃ©rcoles', 'jueves', 'viernes'];
+const DIAS_BUSCAR = ['lunes', 'martes', 'miercoles', 'miércoles', 'jueves', 'viernes'];
 const CONFIG_EMAIL_ADMIN = "TU_CORREO_ADMIN@COLEGIO.CL";
 const DIAS_NOMBRES = ["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"];
 const MESES_NOMBRES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
@@ -194,7 +194,7 @@ function doPost(e) {
       }
     }
 
-    // --- Verificar solapamiento en "PlanificaciÃ³n diaria" (reservas permanentes) ---
+    // --- Verificar solapamiento en "Planificación diaria" (reservas permanentes) ---
     var sheetHorario = buscarHoja(ss, NOMBRE_HOJA_HORARIO);
     if (sheetHorario) {
       var rangoH = sheetHorario.getDataRange();
@@ -220,7 +220,7 @@ function doPost(e) {
           var numDiaCol = -1;
           if (nombreDia.indexOf('lunes') !== -1) numDiaCol = 1;
           else if (nombreDia.indexOf('martes') !== -1) numDiaCol = 2;
-          else if (nombreDia.indexOf('miercoles') !== -1 || nombreDia.indexOf('miÃ©rcoles') !== -1) numDiaCol = 3;
+          else if (nombreDia.indexOf('miercoles') !== -1 || nombreDia.indexOf('miércoles') !== -1) numDiaCol = 3;
           else if (nombreDia.indexOf('jueves') !== -1) numDiaCol = 4;
           else if (nombreDia.indexOf('viernes') !== -1) numDiaCol = 5;
           if (numDiaCol === numDiaSemana) { colDia = c; break; }
@@ -392,8 +392,8 @@ function onEditSala(e) {
   if (col !== COLUMNAS_SOLICITUDES.RESERV_ACEPTADA) return;
   if (row <= 1) return;
 
-  var valor = String(range.getValue() || "").trim().toLowerCase();
-  if (valor !== "si" && valor !== "sÃ­" && valor !== "no") return;
+  var valor = String(range.getValue() || "").trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (valor !== "si" && valor !== "no") return;
 
   var celdaEstado = sheet.getRange(row, COLUMNAS_SOLICITUDES.OBSERVACIONES);
   var obsActual = String(celdaEstado.getValue() || "").trim();
@@ -412,7 +412,7 @@ function onEditSala(e) {
 
   var mensajeObs = "";
 
-  if (valor === "si" || valor === "sÃ­") {
+  if (valor === "si") {
     mensajeObs = reescribirHorarioSala(row);
   } else {
     mensajeObs = "Rechazado";
@@ -421,13 +421,13 @@ function onEditSala(e) {
   var correo = buscarCorreoProfesor(profesor, ss);
   if (!correo) {
     Logger.log("No se encontro correo para: " + profesor);
-    mensajeObs += " - No se encontrÃ³ el docente";
+    mensajeObs += " - No se encontró el docente";
     celdaEstado.setValue(mensajeObs.trim());
     return;
   }
 
   var asunto, cuerpo;
-  if (valor === "si" || valor === "sÃ­") {
+  if (valor === "si") {
     asunto = "Reserva Sala APROBADA - " + fecha + " (" + horaInicio + " a " + horaFin + ")";
     cuerpo = "Hola " + profesor + ",\n\nTu reserva de la Sala ha sido APROBADA.\n\nDetalles:\n- Curso: " + curso + "\n- Fecha: " + fecha + "\n- Horario: " + horaInicio + " a " + horaFin + (obsActual ? "\n- Observaciones: " + obsActual : "") + "\n\nSaludos,\nEquipo de TI";
   } else {
@@ -437,7 +437,7 @@ function onEditSala(e) {
 
   try {
     MailApp.sendEmail(correo, asunto, cuerpo, { name: 'RESERVA SALA' });
-    mensajeObs += " - Enviado âœ“";
+    mensajeObs += " - Enviado ✓";
   } catch (err) {
     Logger.log("Error al enviar correo: " + err.message);
     mensajeObs += " - Error al enviar correo";
@@ -449,9 +449,9 @@ function onEditSala(e) {
 function reescribirHorarioSala(rowNum) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheetSol = buscarHoja(ss, NOMBRE_HOJA_SOLICITUDES);
-  if (!sheetSol) { Logger.log("SALA: No se encontrÃ³ Solicitudes"); return "Error: No se encontrÃ³ Solicitudes"; }
+  if (!sheetSol) { Logger.log("SALA: No se encontró Solicitudes"); return "Error: No se encontró Solicitudes"; }
   var sheetHorario = buscarHoja(ss, NOMBRE_HOJA_HORARIO);
-  if (!sheetHorario) { Logger.log("SALA: No se encontrÃ³ " + NOMBRE_HOJA_HORARIO); return "Error: No se encontrÃ³ la hoja Horario"; }
+  if (!sheetHorario) { Logger.log("SALA: No se encontró " + NOMBRE_HOJA_HORARIO); return "Error: No se encontró la hoja Horario"; }
 
   var rowData = sheetSol.getRange(rowNum, 1, 1, 7).getValues()[0];
   var curso = String(rowData[COLUMNAS_SOLICITUDES.CURSO - 1] || "").trim();
@@ -462,15 +462,15 @@ function reescribirHorarioSala(rowNum) {
   Logger.log("SALA: curso=" + curso + " fechaDisplay=" + fechaDisplay + " horaIni=" + horaInicioStr + " horaFin=" + horaFinStr);
 
   var fechaDate = parseFechaDisplay(fechaDisplay);
-  if (!fechaDate) { Logger.log("SALA: Fecha invÃ¡lida: " + fechaDisplay); return "Error: Fecha invÃ¡lida"; }
+  if (!fechaDate) { Logger.log("SALA: Fecha inválida: " + fechaDisplay); return "Error: Fecha inválida"; }
   var numDia = fechaDate.getDay();
   var MAPEO_DIAS = { 1: 3, 2: 4, 3: 5, 4: 6, 5: 7 };
   var colDia = MAPEO_DIAS[numDia];
-  if (!colDia) { Logger.log("SALA: DÃ­a no vÃ¡lido (fin de semana): " + numDia); return "Error: DÃ­a no vÃ¡lido (fin de semana)"; }
+  if (!colDia) { Logger.log("SALA: Día no válido (fin de semana): " + numDia); return "Error: Día no válido (fin de semana)"; }
 
   var minInicio = horaAMinutos(horaInicioStr);
   var minFin = horaAMinutos(horaFinStr);
-  if (minInicio === null || minFin === null || minInicio >= minFin) { Logger.log("SALA: Horas invÃ¡lidas: " + horaInicioStr + "-" + horaFinStr); return "Error: Horas invÃ¡lidas"; }
+  if (minInicio === null || minFin === null || minInicio >= minFin) { Logger.log("SALA: Horas inválidas: " + horaInicioStr + "-" + horaFinStr); return "Error: Horas inválidas"; }
 
   Logger.log("SALA: minInicio=" + minInicio + " minFin=" + minFin + " colDia=" + colDia);
 
@@ -487,7 +487,7 @@ function reescribirHorarioSala(rowNum) {
     }
     if (dayCount >= 3) { headerRowDays = r; Logger.log("SALA: headerRowDays=" + r + " dayCount=" + dayCount); break; }
   }
-  if (headerRowDays === -1) { Logger.log("SALA: No se encontrÃ³ fila de dÃ­as"); return "Error: No se encontrÃ³ fila de dÃ­as en el horario"; }
+  if (headerRowDays === -1) { Logger.log("SALA: No se encontró fila de días"); return "Error: No se encontró fila de días en el horario"; }
 
   var profesor = String(rowData[COLUMNAS_SOLICITUDES.PROFESOR - 1] || "").trim();
   var textoReserva = (profesor + " " + curso).toUpperCase();
@@ -512,13 +512,13 @@ function reescribirHorarioSala(rowNum) {
         celda.setFontSize(11);
         celda.setFontWeight("bold");
         celda.setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP);
-        ss.toast("Reserva escrita en horario", "Ã‰xito", 5);
+        ss.toast("Reserva escrita en horario", "Éxito", 5);
         return "Reserva escrita en horario";
       }
-      return "Error: El horario ya estÃ¡ ocupado";
+      return "Error: El horario ya está ocupado";
     }
   }
-  return "Error: No se encontrÃ³ bloque horario que coincida";
+  return "Error: No se encontró bloque horario que coincida";
 }
 
 function obtenerSolicitudesProximaSemana() {

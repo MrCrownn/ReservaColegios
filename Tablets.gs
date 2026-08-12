@@ -1,4 +1,4 @@
-﻿/*
+/*
  * RESERVAS DE TABLETS - Colegio El Alba de Macul
  * Backend unico para Apps Script (Google Sheets).
  *
@@ -365,12 +365,12 @@ function formatearHora(valor) {
 
 /**
  * @OnlyCurrentDoc
- * Este script se activa al editar la hoja. Si se marca una casilla en la columna de envÃ­o,
- * busca el correo de un profesor y envÃ­a una notificaciÃ³n.
- * Si hay mÃºltiples coincidencias, muestra un selector. Si hay un error, lo registra.
+ * Este script se activa al editar la hoja. Si se marca una casilla en la columna de envío,
+ * busca el correo de un profesor y envía una notificación.
+ * Si hay múltiples coincidencias, muestra un selector. Si hay un error, lo registra.
  */
 
-// --- CONFIGURACIÃ“N DE HOJAS Y COLUMNAS ---
+// --- CONFIGURACIÓN DE HOJAS Y COLUMNAS ---
 const NOMBRE_HOJA_SOLICITUDES = "Solicitudes";
 const NOMBRE_HOJA_PROFESORES = "Profes";
 const COLUMNAS_SOLICITUDES = {
@@ -390,11 +390,11 @@ const COLUMNAS_PROFESORES = {
   APELLIDO: 2,
   CORREO: 3
 };
-// --- FIN DE LA CONFIGURACIÃ“N ---
+// --- FIN DE LA CONFIGURACIÓN ---
 
 /**
  * Carga el diccionario de profesores desde la hoja 'Profes'.
- * El diccionario tendrÃ¡ el formato "Nombre Apellido": "correo" o "Nombre": "correo".
+ * El diccionario tendrá el formato "Nombre Apellido": "correo" o "Nombre": "correo".
  * @returns {Object} El diccionario de profesores.
  */
 function cargarDiccionarioDesdeProfesores() {
@@ -402,7 +402,7 @@ function cargarDiccionarioDesdeProfesores() {
   const hojaProfesores = spreadsheet.getSheetByName(NOMBRE_HOJA_PROFESORES);
 
   if (!hojaProfesores) {
-    throw new Error(`La hoja "${NOMBRE_HOJA_PROFESORES}" no se encontrÃ³.`);
+    throw new Error(`La hoja "${NOMBRE_HOJA_PROFESORES}" no se encontró.`);
   }
 
   // Obtiene todos los datos de la hoja, omitiendo la fila de encabezados.
@@ -422,8 +422,8 @@ function cargarDiccionarioDesdeProfesores() {
         correo: correo
       };
       
-      // Si hay un apellido, tambiÃ©n agrega una entrada solo con el nombre
-      // Esto permite que la bÃºsqueda sea mÃ¡s flexible
+      // Si hay un apellido, también agrega una entrada solo con el nombre
+      // Esto permite que la búsqueda sea más flexible
       if (apellido) {
         diccionario[nombre.toLowerCase()] = {
           nombreCompleto: nombreCompleto,
@@ -436,7 +436,7 @@ function cargarDiccionarioDesdeProfesores() {
 }
 
 /**
- * FunciÃ³n principal activada por la ediciÃ³n de la hoja.
+ * Función principal activada por la edición de la hoja.
  */
 function enviarCorreoAlEditar(e) {
   var range = e.range;
@@ -465,8 +465,8 @@ function enviarCorreoAlEditar(e) {
     if (coincidencias.length === 0) {
     
       var ui= SpreadsheetApp.getUi();
-      var resp= ui.alert("Profesor no Encontrado ", "No se encontrÃ³ correo para " + nombreProfe +
-                        ".\n Â¿Deseas agregarlo ahora?", ui.ButtonSet.YES_NO );
+      var resp= ui.alert("Profesor no Encontrado ", "No se encontró correo para " + nombreProfe +
+                        ".\n ¿Deseas agregarlo ahora?", ui.ButtonSet.YES_NO );
       if (resp != ui.Button.YES){
         reescribirHorario(row);
         celdaEstado.setValue("Agendado sin correo").setFontColor("#E67E22").setBackground("#FEF3C7");
@@ -481,7 +481,7 @@ function enviarCorreoAlEditar(e) {
       }
     var nombre = inputNombre.getResponseText().trim();
 
-    var inputApellido = ui.prompt('Apellido del profesor', 'Ej: PÃ©rez', ui.ButtonSet.OK_CANCEL);
+    var inputApellido = ui.prompt('Apellido del profesor', 'Ej: Pérez', ui.ButtonSet.OK_CANCEL);
     if (inputApellido.getSelectedButton() !== ui.Button.OK){ 
       reescribirHorario(row);
       celdaEstado.setValue("Agendado sin correo").setFontColor("#E67E22").setBackground("#FEF3C7");
@@ -489,7 +489,7 @@ function enviarCorreoAlEditar(e) {
     }
     var apellido = inputApellido.getResponseText().trim();
 
-    var inputCorreo = ui.prompt('Correo electrÃ³nico', 'Ej: juan@colegio.cl', ui.ButtonSet.OK_CANCEL);
+    var inputCorreo = ui.prompt('Correo electrónico', 'Ej: juan@colegio.cl', ui.ButtonSet.OK_CANCEL);
     if (inputCorreo.getSelectedButton() !== ui.Button.OK) 
     { 
       reescribirHorario(row);
@@ -501,7 +501,7 @@ function enviarCorreoAlEditar(e) {
     if (!correo || correo.indexOf('@') === -1) {
       reescribirHorario(row);
       celdaEstado.setValue("Agendado sin correo").setFontColor("#E67E22").setBackground("#FEF3C7");
-      ui.alert('Error', 'El correo ingresado no es vÃ¡lido. La reserva se agendÃ³ sin envÃ­o de correo.', ui.ButtonSet.OK);
+      ui.alert('Error', 'El correo ingresado no es válido. La reserva se agendó sin envío de correo.', ui.ButtonSet.OK);
       return;
     }
 
@@ -541,7 +541,7 @@ function buscarCoincidencias(nombreBuscado, diccionario) {
     }
   }
 
-  // Eliminar duplicados basÃ¡ndose en el correo electrÃ³nico.
+  // Eliminar duplicados basándose en el correo electrónico.
   const unicas = {};
   return coincidencias.filter(item => {
     // Si el correo ya existe en el objeto 'unicas', es un duplicado.
@@ -568,9 +568,9 @@ function mostrarSelectorUI(opciones, rowNum) {
 }
 
 /**
- * Esta funciÃ³n es llamada desde el HTML para procesar la selecciÃ³n del usuario.
+ * Esta función es llamada desde el HTML para procesar la selección del usuario.
  * @param {string} correoSeleccionado El correo que el usuario ha elegido.
- * @param {number} rowNum El nÃºmero de fila del registro a procesar.
+ * @param {number} rowNum El número de fila del registro a procesar.
  */
 function procesarSeleccion(correoSeleccionado, rowNum) {
   try {
@@ -588,9 +588,9 @@ function procesarSeleccion(correoSeleccionado, rowNum) {
 }
 
 /**
- * FunciÃ³n que encapsula toda la lÃ³gica de obtenciÃ³n de datos y envÃ­o de correo.
+ * Función que encapsula toda la lógica de obtención de datos y envío de correo.
  * @param {string} email El correo del destinatario.
- * @param {number} rowNum El nÃºmero de fila de donde se obtienen los datos.
+ * @param {number} rowNum El número de fila de donde se obtienen los datos.
  * @param {Object} celdaEstado La celda de columna K para escribir el resultado.
  */
 function enviarEmail(email, rowNum, celdaEstado) {
@@ -598,7 +598,7 @@ function enviarEmail(email, rowNum, celdaEstado) {
   const sheet = spreadsheet.getSheetByName(NOMBRE_HOJA_SOLICITUDES);
   const rowData = sheet.getRange(rowNum, 1, 1, 10).getValues()[0];
   const nombreProfe = rowData[COLUMNAS_SOLICITUDES.NOMBRE_PROFE - 1];
-  const estado = rowData[COLUMNAS_SOLICITUDES.ESTADO - 1].toString().trim().toLowerCase();
+  const estado = rowData[COLUMNAS_SOLICITUDES.ESTADO - 1].toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
   const cantidadTablet = rowData[COLUMNAS_SOLICITUDES.CANTIDAD_TABLET - 1];
   const fecha = Utilities.formatDate(new Date(rowData[COLUMNAS_SOLICITUDES.FECHA - 1]), spreadsheet.getSpreadsheetTimeZone(), "dd/MM/yyyy");
@@ -610,38 +610,38 @@ function enviarEmail(email, rowNum, celdaEstado) {
   let asunto = "";
   let cuerpo = "";
 
-  if (estado === 'sÃ­' || estado === 'si') {
+  if (estado === 'si') {
     asunto = `Solicitud de Tablets APROBADA - ${curso}`;
     cuerpo = `Hola ${nombreProfe},\n\nTu solicitud de tablets ha sido APROBADA.\n\nDetalles:\n- Curso: ${curso}\n- Cantidad: ${cantidadTablet}\n- Fecha: ${fecha}\n- Horario: De ${horaPrincipio} a ${horaFin}\n\nComentarios: ${comentarios}\n\nSaludos,\nEquipo de TI`;
   } else if (estado === 'no') {
     asunto = `Solicitud de Tablets RECHAZADA - ${curso}`;
     cuerpo = `Hola ${nombreProfe},\n\nLamentamos informarte que tu solicitud de tablets ha sido RECHAZADA.\n\nDetalles:\n- Curso: ${curso}\n- Cantidad: ${cantidadTablet}\n- Fecha: ${fecha}\n- Horario: De ${horaPrincipio} a ${horaFin}\n\nMotivo: ${comentarios}\n\nSaludos,\nEquipo de TI`;
   } else {
-    throw new Error("El estado en la columna 'G' debe ser 'SÃ­' o 'No'.");
+    throw new Error("El estado en la columna 'G' debe ser 'Sí' o 'No'.");
   }
 
   MailApp.sendEmail(email, asunto, cuerpo, { name: 'RESERVA TABLETS' });
 
-  if (estado === 'sÃ­' || estado === 'si') {
+  if (estado === 'si') {
     reescribirHorario(rowNum);
   }
 
-  celdaEstado.setValue("Enviado âœ“").setFontColor("#16A34A").setBackground("#DCFCE7").setNote("Enviado el " + new Date());
-  spreadsheet.toast("Correo enviado a " + nombreProfe, "Ã‰xito", 5);
+  celdaEstado.setValue("Enviado ✓").setFontColor("#16A34A").setBackground("#DCFCE7").setNote("Enviado el " + new Date());
+  spreadsheet.toast("Correo enviado a " + nombreProfe, "Éxito", 5);
 }
 
 /**
- * FunciÃ³n para manejar los errores y actualizar la hoja de cÃ¡lculo.
+ * Función para manejar los errores y actualizar la hoja de cálculo.
  * @param {string} message Mensaje de error.
  * @param {Object} celdaEstado La celda de columna K para escribir el error.
- * @param {Object} spreadsheet El objeto de la hoja de cÃ¡lculo.
+ * @param {Object} spreadsheet El objeto de la hoja de cálculo.
  */
 function handleError(message, celdaEstado, spreadsheet) {
   celdaEstado.setValue(message).setFontColor("#DC2626").setBackground(null);
   spreadsheet.toast(message, "Error", 10);
 }
 
-// --- CONFIGURACIÃ“N DE HOJA "HORARIO SEMANAL" ---
+// --- CONFIGURACIÓN DE HOJA "HORARIO SEMANAL" ---
 const NOMBRE_HOJA_HORARIO = "Horario semanal";
 const FILA_HEADER_HORARIO = 5;
 const COL_HORA_HORARIO = 2;
@@ -651,7 +651,7 @@ function reescribirHorario(rowNum) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheetSol = ss.getSheetByName(NOMBRE_HOJA_SOLICITUDES);
   var sheetHorario = ss.getSheetByName(NOMBRE_HOJA_HORARIO);
-  if (!sheetHorario) { Logger.log("No se encontrÃ³ la hoja '" + NOMBRE_HOJA_HORARIO + "'"); return; }
+  if (!sheetHorario) { Logger.log("No se encontró la hoja '" + NOMBRE_HOJA_HORARIO + "'"); return; }
 
   var rowData = sheetSol.getRange(rowNum, 1, 1, 7).getValues()[0];
   var nombreProfe = String(rowData[0] || "").trim();
@@ -671,7 +671,7 @@ function reescribirHorario(rowNum) {
   var minInicio = horaInicioDate.getHours() * 60 + horaInicioDate.getMinutes();
   var minFin = horaFinDate.getHours() * 60 + horaFinDate.getMinutes();
 
-  if (minInicio >= minFin) { Logger.log("Rango de horas invÃ¡lido."); return; }
+  if (minInicio >= minFin) { Logger.log("Rango de horas inválido."); return; }
 
   var cantNum = parseInt(cantidad);
   var textoReserva;
@@ -755,9 +755,9 @@ function reescribirHorario(rowNum) {
   }
 
   if (escritas > 0) {
-    ss.toast("Reserva escrita en " + escritas + " bloque(s) del horario", "Ã‰xito", 5);
+    ss.toast("Reserva escrita en " + escritas + " bloque(s) del horario", "Éxito", 5);
   } else {
-    var diasSemana = ["Domingo", "Lunes", "Martes", "MiÃ©rcoles", "Jueves", "Viernes", "SÃ¡bado"];
+    var diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
     var msg = "No se encontraron bloques horarios solapados para " + diasSemana[numDia] + " " + horaInicioDate.getHours() + ":" + ("0" + horaInicioDate.getMinutes()).slice(-2) + " - " + horaFinDate.getHours() + ":" + ("0" + horaFinDate.getMinutes()).slice(-2);
     ss.toast(msg, "Aviso", 8);
   }
@@ -776,6 +776,6 @@ function HoraAMinutosApp(horaStr) {
 function agregarProfesor(nombre, apellido, correo) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(NOMBRE_HOJA_PROFESORES);
-  if (!sheet) throw new Error('No se encontrÃ³ la hoja "' + NOMBRE_HOJA_PROFESORES + '".');
+  if (!sheet) throw new Error('No se encontró la hoja "' + NOMBRE_HOJA_PROFESORES + '".');
   sheet.appendRow([nombre, apellido, correo]);
 }
